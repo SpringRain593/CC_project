@@ -79,12 +79,14 @@ const rules = {
 };
 
 // 表單有效性
-const isValid = computed(() =>
-    newFilename.value &&
-    !rules.required(newFilename.value) &&
-    !rules.noSpaces(newFilename.value) &&
-    !rules.validFilename(newFilename.value)
-);
+const isValid = computed(() => {
+    // 檢查所有規則是否都通過 (返回 true)
+    const requiredPass = rules.required(newFilename.value) === true;
+    const noSpacesPass = rules.noSpaces(newFilename.value) === true;
+    const validFilenamePass = rules.validFilename(newFilename.value) === true;
+    
+    return requiredPass && noSpacesPass && validFilenamePass;
+});
 
 watch(dialog, val => {
     if (val) newFilename.value = props.currentFilename;
