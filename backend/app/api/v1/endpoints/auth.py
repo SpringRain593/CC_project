@@ -61,27 +61,27 @@ async def login_for_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
 
-    # 產生並儲存 Refresh Token
-    refresh_token_expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
-    # 產生一個唯一的 refresh token 字串，可以考慮將其也存入 refresh_token 表中
-    # 或者直接使用 crud_refresh_token.create_refresh_token 內部產生的 token
+    # # 產生並儲存 Refresh Token
+    # refresh_token_expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    # # 產生一個唯一的 refresh token 字串，可以考慮將其也存入 refresh_token 表中
+    # # 或者直接使用 crud_refresh_token.create_refresh_token 內部產生的 token
     
-    # 我們讓 create_refresh_token 內部產生 token value
-    db_refresh_token = crud_refresh_token.create_refresh_token(
-        db=db, user=user, expires_delta=refresh_token_expires_delta
-    )
+    # # 我們讓 create_refresh_token 內部產生 token value
+    # db_refresh_token = crud_refresh_token.create_refresh_token(
+    #     db=db, user=user, expires_delta=refresh_token_expires_delta
+    # )
 
-    # 設定 Refresh Token 到 HttpOnly Cookie
-    response.set_cookie(
-        key=settings.REFRESH_TOKEN_COOKIE_NAME,
-        value=db_refresh_token.token, # 使用儲存到資料庫的 token 值
-        httponly=settings.REFRESH_TOKEN_COOKIE_HTTPONLY,
-        secure=settings.REFRESH_TOKEN_COOKIE_SECURE, # 在生產中應為 True
-        samesite=settings.REFRESH_TOKEN_COOKIE_SAMESITE,
-        path=settings.REFRESH_TOKEN_COOKIE_PATH,
-        domain=settings.REFRESH_TOKEN_COOKIE_DOMAIN,
-        max_age=int(refresh_token_expires_delta.total_seconds()) # Cookie 的 max_age 以秒為單位
-    )
+    # # 設定 Refresh Token 到 HttpOnly Cookie
+    # response.set_cookie(
+    #     key=settings.REFRESH_TOKEN_COOKIE_NAME,
+    #     value=db_refresh_token.token, # 使用儲存到資料庫的 token 值
+    #     httponly=settings.REFRESH_TOKEN_COOKIE_HTTPONLY,
+    #     secure=settings.REFRESH_TOKEN_COOKIE_SECURE, # 在生產中應為 True
+    #     samesite=settings.REFRESH_TOKEN_COOKIE_SAMESITE,
+    #     path=settings.REFRESH_TOKEN_COOKIE_PATH,
+    #     domain=settings.REFRESH_TOKEN_COOKIE_DOMAIN,
+    #     max_age=int(refresh_token_expires_delta.total_seconds()) # Cookie 的 max_age 以秒為單位
+    # )
     
     # 回傳 Access Token 在 JSON body 中
     return {"access_token": access_token, "token_type": "bearer"}
@@ -183,10 +183,10 @@ async def logout(
             # 或者，如果想撤銷該使用者的所有 refresh token：
             # crud_refresh_token.revoke_all_refresh_tokens_for_user(db, user_id=token_obj.user_id)
     
-    # 清除用戶端的 refresh token cookie
-    response.delete_cookie(
-        settings.REFRESH_TOKEN_COOKIE_NAME, 
-        path=settings.REFRESH_TOKEN_COOKIE_PATH, 
-        domain=settings.REFRESH_TOKEN_COOKIE_DOMAIN
-    )
+    # # 清除用戶端的 refresh token cookie
+    # response.delete_cookie(
+    #     settings.REFRESH_TOKEN_COOKIE_NAME, 
+    #     path=settings.REFRESH_TOKEN_COOKIE_PATH, 
+    #     domain=settings.REFRESH_TOKEN_COOKIE_DOMAIN
+    # )
     return {"message": "Successfully logged out"}
